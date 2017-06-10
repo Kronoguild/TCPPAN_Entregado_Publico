@@ -5,7 +5,6 @@ import dao.DAOException;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -379,9 +378,7 @@ public class ABM extends javax.swing.JFrame {
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
         try {
             guardar();
-        } catch (HeadlessException ex) {
-            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DAOException ex) {
+        } catch (HeadlessException | DAOException ex) {
             Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_guardarButtonActionPerformed
@@ -401,14 +398,17 @@ public class ABM extends javax.swing.JFrame {
                 dao.insertar(alu);
             } catch (DAOException ex) {
                 Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+                //Entra aca cuando existe un DNI ya existente
+
+                //En caso que el registro correspondiente en el Archivo este seteado en Activo
                 if (("A".equals(String.valueOf((dao.buscar(alu.getDni())).getEstado())))) {
                     int resp = JOptionPane.showOptionDialog(this, "¿Desea actualizar el registro?", "El registro ya existe", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
 
+                    //Si toca cancelar, retorna, no hace nada
                     if (JOptionPane.NO_OPTION == resp) {
                         return;
-                    }
-
-                    if (JOptionPane.OK_OPTION == resp) {
+                    } //Sobreescribe los datos
+                    else if (JOptionPane.OK_OPTION == resp) {
 
                         try {
                             dao.actualizar(alu);
@@ -418,37 +418,39 @@ public class ABM extends javax.swing.JFrame {
 
                     }
                 } else {
+                    //En caso que el registro correspondiente en el Archivo este seteado en Inactivo (B) 
                     int resp = JOptionPane.showOptionDialog(this, "¿Desea activar el registro?", "El registro ya existe", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
 
-                    if (JOptionPane.CANCEL_OPTION == resp) {
-                        return;
-                    }
-
-                    else if (JOptionPane.NO_OPTION == resp) {
-
-                        try {
-                            alu.setEstado("A".charAt(0));
-                            dao.actualizar(alu);
-                        } catch (DAOException ex1) {
-                            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex1);
-                        }
-
-                    }
-
-                    else if (JOptionPane.YES_OPTION == resp) {
-
-                        try {
-                            alu=dao.buscar(alu.getDni());
-                            alu.setEstado("A".charAt(0));
-                            dao.actualizar(alu);
-                        } catch (DAOException ex1) {
-                            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex1);
-                        }
-
+                    switch (resp) {
+                        //Si toca cancelar, no hace nada
+                        case JOptionPane.CANCEL_OPTION:
+                            return;
+                        //Si toca que no, simplemente actualiza con los datos ingresados y lo setea en Activo
+                        case JOptionPane.NO_OPTION:
+                            try {
+                                alu.setEstado("A".charAt(0));
+                                dao.actualizar(alu);
+                            } catch (DAOException ex1) {
+                                Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex1);
+                            }
+                            break;
+                        //Si toca que si, seteo el estado en Activo y recupero el registro del archivo
+                        case JOptionPane.YES_OPTION:
+                            try {
+                                alu = dao.buscar(alu.getDni());
+                                alu.setEstado("A".charAt(0));
+                                dao.actualizar(alu);
+                            } catch (DAOException ex1) {
+                                Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex1);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
         } else {
+            //Si no es registro nuevo, entonces intenta actualizar
             try {
                 dao.actualizar(alu);
             } catch (DAOException ex) {
@@ -460,13 +462,12 @@ public class ABM extends javax.swing.JFrame {
         if (alu != null) {
             setEstadoInicial();
         }
-        return;
     }
 
 
     private void abrirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirButtonActionPerformed
         abrir();
-        
+
     }//GEN-LAST:event_abrirButtonActionPerformed
 
     /*
@@ -515,7 +516,6 @@ public class ABM extends javax.swing.JFrame {
 
         //Setea el estado
         setEstadoAbrir();
-        return;
     }
 
     private void borrarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarButtonActionPerformed
@@ -623,9 +623,7 @@ public class ABM extends javax.swing.JFrame {
             if (registroNuevo || registroAbierto) {
                 try {
                     guardar();
-                } catch (HeadlessException ex) {
-                    Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (DAOException ex) {
+                } catch (HeadlessException | DAOException ex) {
                     Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
@@ -921,15 +919,11 @@ public class ABM extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ABM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ABM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ABM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(ABM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
