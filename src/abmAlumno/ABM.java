@@ -1,6 +1,8 @@
 package abmAlumno;
 
+import dao.AlumnoDAOBD;
 import dao.AlumnoDAOTxt;
+import dao.DAO;
 import dao.DAOException;
 import java.awt.HeadlessException;
 import java.io.File;
@@ -361,8 +363,13 @@ public class ABM extends javax.swing.JFrame {
         //Setea en el text field de archivo el path
         archivoTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
 
-        //Coloca en la tabla todos los elementos, sin importar su estado
-        miModeloTabla.setLista(dao.getTodos());
+        //Try-catch del DAO
+        try {
+            //Coloca en la tabla todos los elementos, sin importar su estado
+            miModeloTabla.setLista(dao.getTodos());
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
         miModeloTabla.fireTableDataChanged();
 
         //Setea los checkbox
@@ -581,8 +588,13 @@ public class ABM extends javax.swing.JFrame {
         //Por ultimo, setea el estado
         alu.setEstado(((String) estadoComboBox.getSelectedItem()).charAt(0));
 
-        //Llama al metodo eliminar
-        dao.eliminar(alu);
+        //Try-catch del DAO
+        try {
+            //Llama al metodo eliminar
+            dao.eliminar(alu);
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //Vuelve al estado inicial, listo para buscar o crear un registro.
         setEstadoInicial();
@@ -598,7 +610,12 @@ public class ABM extends javax.swing.JFrame {
     private void deshabilitadosCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_deshabilitadosCheckBoxItemStateChanged
         deshabilitados = !deshabilitados;
 
-        actualizarTabla();
+        //Try-catch del DAO
+        try {
+            actualizarTabla();
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_deshabilitadosCheckBoxItemStateChanged
 
     /*
@@ -611,7 +628,12 @@ public class ABM extends javax.swing.JFrame {
     private void habilitadosCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_habilitadosCheckBoxItemStateChanged
         habilitados = !habilitados;
 
-        actualizarTabla();
+        //Try-catch del DAO
+        try {
+            actualizarTabla();
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_habilitadosCheckBoxItemStateChanged
 
     /*
@@ -663,7 +685,12 @@ public class ABM extends javax.swing.JFrame {
         deshabilitadosCheckBox.setEnabled(true);
 
         limpiarCampos();
-        actualizarTabla();
+        try {
+            //Try-catch del DAO
+            actualizarTabla();
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Setea las flag de registro abierto y registro nuevo
         registroNuevo = false;
         registroAbierto = false;
@@ -886,7 +913,7 @@ public class ABM extends javax.swing.JFrame {
     * Segun las flags, realiza el manejo de datos.
     * @returns void
      */
-    private void actualizarTabla() {
+    private void actualizarTabla() throws DAOException {
         if (habilitados && deshabilitados) {
             miModeloTabla.setLista(dao.getTodos());
             miModeloTabla.fireTableDataChanged();
@@ -923,7 +950,7 @@ public class ABM extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ABM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the form */
@@ -966,7 +993,9 @@ public class ABM extends javax.swing.JFrame {
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 
-    private AlumnoDAOTxt dao;
+    private DAO<Alumno, Integer> dao;
+    private AlumnoDAOTxt alumnoDAOTxt;
+    private AlumnoDAOBD alumnoDAOBD;
     private MiModeloTabla miModeloTabla;
     private File archivoAbierto;
     private boolean registroNuevo = false;
