@@ -680,7 +680,7 @@ public class ABM extends javax.swing.JFrame {
         setEstadoDefault();
         baseDeDatosRadioButton.setSelected(false);
         archivoRadioButton.setSelected(true);
-        
+
         dao = alumnoDAOTxt;
         limpiarCampos();
     }//GEN-LAST:event_archivoRadioButtonActionPerformed
@@ -688,9 +688,9 @@ public class ABM extends javax.swing.JFrame {
     private void baseDeDatosRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDeDatosRadioButtonActionPerformed
         try {
             dao = new AlumnoDAOBD();
-        } catch (SQLException |InstantiationException |IllegalAccessException ex) {
+        } catch (SQLException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
 
         limpiarCampos();
         setEstadoInicial();
@@ -698,6 +698,18 @@ public class ABM extends javax.swing.JFrame {
         seleccionarArchivoButton.setEnabled(false);
         baseDeDatosRadioButton.setSelected(true);
         archivoRadioButton.setSelected(false);
+        //Try-catch del DAO
+        try {
+            //Coloca en la tabla todos los elementos, sin importar su estado
+            miModeloTabla.setLista(dao.getTodos());
+        } catch (DAOException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        miModeloTabla.fireTableDataChanged();
+
+        //Setea los checkbox
+        deshabilitadosCheckBox.setSelected(true);
+        habilitadosCheckBox.setSelected(true);
     }//GEN-LAST:event_baseDeDatosRadioButtonActionPerformed
 
     /*
@@ -731,11 +743,11 @@ public class ABM extends javax.swing.JFrame {
         deshabilitadosCheckBox.setEnabled(true);
 
         limpiarCampos();
-        
+
         //Setea las flag de registro abierto y registro nuevo
         registroNuevo = false;
         registroAbierto = false;
-        
+
         try {
             //Try-catch del DAO
             actualizarTabla();
@@ -768,7 +780,7 @@ public class ABM extends javax.swing.JFrame {
         cantMateriasTextField.setEnabled(false);
         habilitadosCheckBox.setEnabled(false);
         deshabilitadosCheckBox.setEnabled(false);
-        
+
         dao = alumnoDAOTxt;
         archivoRadioButton.setSelected(true);
     }
@@ -801,7 +813,7 @@ public class ABM extends javax.swing.JFrame {
 
         //Coloca en true la flag de nuevo registro
         registroNuevo = true;
-        
+
         limpiarCampos();
     }
 
