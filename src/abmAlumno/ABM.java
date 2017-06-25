@@ -7,6 +7,7 @@ import dao.DAOException;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -676,8 +677,7 @@ public class ABM extends javax.swing.JFrame {
     }//GEN-LAST:event_dniFormattedTextFieldKeyPressed
 
     private void archivoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoRadioButtonActionPerformed
-        archivoTextField.setEnabled(true);
-        seleccionarArchivoButton.setEnabled(true);
+        setEstadoDefault();
         baseDeDatosRadioButton.setSelected(false);
         archivoRadioButton.setSelected(true);
         
@@ -686,14 +686,18 @@ public class ABM extends javax.swing.JFrame {
     }//GEN-LAST:event_archivoRadioButtonActionPerformed
 
     private void baseDeDatosRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDeDatosRadioButtonActionPerformed
+        try {
+            dao = new AlumnoDAOBD();
+        } catch (SQLException |InstantiationException |IllegalAccessException ex) {
+            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
+        limpiarCampos();
+        setEstadoInicial();
         archivoTextField.setEnabled(false);
         seleccionarArchivoButton.setEnabled(false);
         baseDeDatosRadioButton.setSelected(true);
         archivoRadioButton.setSelected(false);
-        
-        dao = alumnoDAOBD;
-        limpiarCampos();
-        setEstadoInicial();
     }//GEN-LAST:event_baseDeDatosRadioButtonActionPerformed
 
     /*
