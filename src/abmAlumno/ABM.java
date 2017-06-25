@@ -84,6 +84,8 @@ public class ABM extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         habilitadosCheckBox = new javax.swing.JCheckBox();
         deshabilitadosCheckBox = new javax.swing.JCheckBox();
+        archivoRadioButton = new javax.swing.JRadioButton();
+        baseDeDatosRadioButton = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -137,15 +139,11 @@ public class ABM extends javax.swing.JFrame {
 
         jLabel3.setText("Sexo");
 
-        fechaNacDateChooser.setDateFormatString("dd/MM/yyyy");
-
         jLabel4.setText("Fecha Nac.");
 
         cantMateriasTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
 
         jLabel5.setText("Cant. Mat. Aprob.");
-
-        fechaIngrDateChooser.setDateFormatString("dd/MM/yyyy");
 
         jLabel6.setText("Fecha Ingr.");
 
@@ -189,6 +187,20 @@ public class ABM extends javax.swing.JFrame {
         deshabilitadosCheckBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 deshabilitadosCheckBoxItemStateChanged(evt);
+            }
+        });
+
+        archivoRadioButton.setText("Archivo");
+        archivoRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                archivoRadioButtonActionPerformed(evt);
+            }
+        });
+
+        baseDeDatosRadioButton.setText("Base de Datos");
+        baseDeDatosRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                baseDeDatosRadioButtonActionPerformed(evt);
             }
         });
 
@@ -252,11 +264,17 @@ public class ABM extends javax.swing.JFrame {
                                     .addComponent(guardarButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel9)
-                                    .addGroup(layout.createSequentialGroup()
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addComponent(archivoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(seleccionarArchivoButton)))
+                                        .addComponent(seleccionarArchivoButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addGap(443, 443, 443)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(archivoRadioButton)
+                                    .addComponent(baseDeDatosRadioButton))
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(habilitadosCheckBox)
@@ -270,11 +288,14 @@ public class ABM extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(archivoRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(archivoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(seleccionarArchivoButton))
+                    .addComponent(seleccionarArchivoButton)
+                    .addComponent(baseDeDatosRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -654,6 +675,27 @@ public class ABM extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_dniFormattedTextFieldKeyPressed
 
+    private void archivoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoRadioButtonActionPerformed
+        archivoTextField.setEnabled(true);
+        seleccionarArchivoButton.setEnabled(true);
+        baseDeDatosRadioButton.setSelected(false);
+        archivoRadioButton.setSelected(true);
+        
+        dao = alumnoDAOTxt;
+        limpiarCampos();
+    }//GEN-LAST:event_archivoRadioButtonActionPerformed
+
+    private void baseDeDatosRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDeDatosRadioButtonActionPerformed
+        archivoTextField.setEnabled(false);
+        seleccionarArchivoButton.setEnabled(false);
+        baseDeDatosRadioButton.setSelected(true);
+        archivoRadioButton.setSelected(false);
+        
+        dao = alumnoDAOBD;
+        limpiarCampos();
+        setEstadoInicial();
+    }//GEN-LAST:event_baseDeDatosRadioButtonActionPerformed
+
     /*
     * setEstadoInicial()
     * 
@@ -685,15 +727,17 @@ public class ABM extends javax.swing.JFrame {
         deshabilitadosCheckBox.setEnabled(true);
 
         limpiarCampos();
+        
+        //Setea las flag de registro abierto y registro nuevo
+        registroNuevo = false;
+        registroAbierto = false;
+        
         try {
             //Try-catch del DAO
             actualizarTabla();
         } catch (DAOException ex) {
             Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //Setea las flag de registro abierto y registro nuevo
-        registroNuevo = false;
-        registroAbierto = false;
     }
 
     /*
@@ -720,6 +764,9 @@ public class ABM extends javax.swing.JFrame {
         cantMateriasTextField.setEnabled(false);
         habilitadosCheckBox.setEnabled(false);
         deshabilitadosCheckBox.setEnabled(false);
+        
+        dao = alumnoDAOTxt;
+        archivoRadioButton.setSelected(true);
     }
 
     /*
@@ -730,7 +777,6 @@ public class ABM extends javax.swing.JFrame {
     * Tambien utiliza una flag para determinar si se esta creando un nuevo registro.
      */
     private void setEstadoNuevo() {
-        limpiarCampos();
 
         archivoTextField.setEnabled(false);
         seleccionarArchivoButton.setEnabled(false);
@@ -751,6 +797,8 @@ public class ABM extends javax.swing.JFrame {
 
         //Coloca en true la flag de nuevo registro
         registroNuevo = true;
+        
+        limpiarCampos();
     }
 
     /*
@@ -964,7 +1012,9 @@ public class ABM extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton abrirButton;
     private javax.swing.JTextField apynTextField;
+    private javax.swing.JRadioButton archivoRadioButton;
     private javax.swing.JTextField archivoTextField;
+    private javax.swing.JRadioButton baseDeDatosRadioButton;
     private javax.swing.JButton borrarButton;
     private javax.swing.JButton cancelarButton;
     private javax.swing.JFormattedTextField cantMateriasTextField;
