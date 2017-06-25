@@ -698,14 +698,6 @@ public class ABM extends javax.swing.JFrame {
         seleccionarArchivoButton.setEnabled(false);
         baseDeDatosRadioButton.setSelected(true);
         archivoRadioButton.setSelected(false);
-        //Try-catch del DAO
-        try {
-            //Coloca en la tabla todos los elementos, sin importar su estado
-            miModeloTabla.setLista(dao.getTodos());
-        } catch (DAOException ex) {
-            Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        miModeloTabla.fireTableDataChanged();
 
         //Setea los checkbox
         deshabilitadosCheckBox.setSelected(true);
