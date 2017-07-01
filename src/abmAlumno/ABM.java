@@ -677,12 +677,22 @@ public class ABM extends javax.swing.JFrame {
     }//GEN-LAST:event_dniFormattedTextFieldKeyPressed
 
     private void archivoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivoRadioButtonActionPerformed
-        setEstadoDefault();
+        if (archivoAbierto != null) {
+            try {
+                dao = new AlumnoDAOTxt(archivoAbierto);
+                setEstadoInicial();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            dao = alumnoDAOTxt;
+            setEstadoDefault();
+            //Envio un array vacio
+            miModeloTabla.setLista(new ArrayList<>());
+            miModeloTabla.fireTableDataChanged();
+        }
         baseDeDatosRadioButton.setSelected(false);
         archivoRadioButton.setSelected(true);
-
-        dao = alumnoDAOTxt;
-        limpiarCampos();
     }//GEN-LAST:event_archivoRadioButtonActionPerformed
 
     private void baseDeDatosRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDeDatosRadioButtonActionPerformed
@@ -692,7 +702,6 @@ public class ABM extends javax.swing.JFrame {
             Logger.getLogger(ABM.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        limpiarCampos();
         setEstadoInicial();
         archivoTextField.setEnabled(false);
         seleccionarArchivoButton.setEnabled(false);
